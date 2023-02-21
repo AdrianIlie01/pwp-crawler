@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  db:
+    image: mysql
+    container_name: db1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: adrian
+      MYSQL_USER: adrian
+      MYSQL_PASSWORD: adrian
+    ports:
+      - 6033:3306
+    volumes:
+      - ./db-folder/db-init1.sql:/db-init1.sql
+  app:
+    image: php:8.1.1-apache1
+    build:
+      context: .
+      dockerfile: ./docker/app.dockerfile
+      args:
+        - REMOTE_HOST=host.docker.internal # Host machine IP
+        - REMOTE_PORT=9003 # IDE/Editor's listener port
+        - IDE_KEY=docker # IDE's filter/listener key
+    working_dir: /var/www
+    depends_on:
+      - db
+    volumes:
+      - /tmp/xdebug:/tmp/xdebug
+      - ./:/var/www
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma1
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8082:80
+  composer:
+    image: library/composer:latest
+    command: [ "composer", "install" ]
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - app
+  web:
+    container_name: web1
+    build:
+      context: .
+      dockerfile: ./docker/web.dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - app
+    ports:
+      - 1082:80

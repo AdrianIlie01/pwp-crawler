@@ -257,8 +257,7 @@ class CrawlerController extends Controller
             for ($i = 1; $i < 8; $i++) {
                 $categoryName = trim($autoCateg[$i]->textContent);
                 var_dump($categoryName);
-// not good
-//// caroserie, volan ,....
+
 //                if (Categories::where('name', $categoryName)->first()) {
 //                    echo 'C already exists <br>';
 //                    var_dump(Categories::where('name', $categoryName)->first()->name);
@@ -354,7 +353,7 @@ class CrawlerController extends Controller
             }
 
 
-//todo ANUNT
+//announce
             for ($i = 0; $i < 10 ; $i++) {
 
                 $dom = new DOMDocument();
@@ -444,15 +443,12 @@ class CrawlerController extends Controller
                                     $sscateg = $liResults->textContent;
                                     $colName = trim(str_replace($value,'',$sscateg)); //SUV / Alb
                                     $colUpCateg = trim(str_replace(': '.$colName,'',$sscateg));
-
-
-                                    //todo
-                                    // Golf is in Sport, timp liber............ => trb golf din Model
+                                   
+                                   
                                     $announceCategoryUp = Categories::where('name',$colUpCateg)->first();
                                     $announceCategory = Categories::where('name', $colName)->first();
 
 
-// pt fiecare anunt creez daca nu exista category si subCategory din el
                                     if (empty($announceCategoryUp)) {
                                         $categ = new Categories();
                                         $categ->name = $colUpCateg;
@@ -477,7 +473,7 @@ class CrawlerController extends Controller
                                     }
 
                                     $newIdColumn = $key.'_id';
-//// salvam subcategoria din dubcategorie Caroserie/ Culoare/ ...  model_id,....
+
                                     if (!empty($announceCategory) && !empty($announceCategoryUp)) {
 //                                        $categLinksParent = CategoryLinks::where('category_id', $announceCategory->id)->first();
 //                                        var_dump($categLinksParent->parent_id);
@@ -489,8 +485,7 @@ class CrawlerController extends Controller
                                         $announce->$newIdColumn = $announceCategory->id;
 
                                     } else { var_dump('empty');}
-
-                                    // for col name like model, car_body
+                          
 //                                    var_dump($liResults->textContent);
 //
 //                                    $prop = trim(str_replace($value, '', $liResults->textContent));
